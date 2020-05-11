@@ -1,0 +1,14 @@
+{
+  "name": "origin-request",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tgpadua",
+  "license": "ISC",
+  "dependencies": {
+    "aws-ssm-parameter-store-util": "^1.0.5"
+  }
+}
