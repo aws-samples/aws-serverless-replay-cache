@@ -2,9 +2,9 @@
 AWS Serverless Replay Cache is a serverless implementation of cache solution for dynamic and static content.
 
 ## Requirements
-Install: SAM CLI
-Setup: CloudFront
-Uninstall: AWS CLI
+- Install: SAM CLI
+- Setup: CloudFront
+- Uninstall: AWS CLI
 
 ## Install
 ```
@@ -12,13 +12,13 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 ```
 
 ## Setup
-Lambda -> Functions -> replay-cache-origin-request
-    Actions -> Deploy to Lambda@Edge
-        CloudFront event: Origin Request
+1. Lambda -> Functions -> replay-cache-origin-request
+    - Actions -> Deploy to Lambda@Edge
+        - CloudFront event: Origin Request
 
-Lambda --> Functions -> replay-cache-origin-response
-    Actions -> Deploy to Lambda@Edge
-        CloudFront event: Origin Response
+2. Lambda --> Functions -> replay-cache-origin-response
+    - Actions -> Deploy to Lambda@Edge
+        - CloudFront event: Origin Response
 
 ## Uninstall
 1. Remove Lambda@EDGE function associations
