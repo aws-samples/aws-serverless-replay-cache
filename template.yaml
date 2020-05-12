@@ -13,7 +13,6 @@ Parameters:
   BucketName:
     Description: Bucket name used to host cache content
     Type: String
-    #Default: tgpadua-cache
   MaxContentLength:
     Description: Max allowed file size to be cached in MB
     Type: String
