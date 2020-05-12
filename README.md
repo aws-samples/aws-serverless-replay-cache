@@ -1,6 +1,9 @@
 ## AWS Serverless Replay Cache
 AWS Serverless Replay Cache is a serverless implementation of cache solution for dynamic and static content.
 
+## Diagram
+![Sequence Diagram](sequence-diagram.png)
+
 ## Requirements
 - Install: SAM CLI
 - Setup: CloudFront
