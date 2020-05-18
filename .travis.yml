@@ -1,13 +1,12 @@
 branches:
-    only:
-    - hex-arc
+  only:
+  - hex-arc
     
 langugage: node_js
 
 node_js: "12"
 
-before_script:
-    - npm install -g mocha
+before_script: npm install -g mocha
     
 jobs:
   include:
