@@ -6,7 +6,7 @@ langugage: node_js
 
 node_js: "12"
 
-before_script:
+before_install:
     - npm install mocha
     
 jobs:
