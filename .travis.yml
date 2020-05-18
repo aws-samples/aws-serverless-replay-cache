@@ -1,7 +1,4 @@
-branches:
-  only:
-  - hex-arc
-    
+
 langugage: node_js
 
 node_js: "12"
