@@ -1,0 +1,20 @@
+branches:
+    only:
+    - hex-arc
+    
+langugage: node_js
+
+node_js: "12"
+
+before_script:
+    - npm install mocha
+    
+jobs:
+    include:
+        script:
+            - stage: 'Origin Request'
+            - cd origin-request && npm test
+        script:
+            - stage: 'Origin Response'
+            - cd origin-response && npm test
+    
