@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/aws-samples/aws-serverless-replay-cache.svg?branch=master)](https://travis-ci.org/aws-samples/aws-serverless-replay-cache)
+
 ## AWS Serverless Replay Cache
 AWS Serverless Replay Cache is a serverless implementation of cache solution for dynamic and static content.
 
