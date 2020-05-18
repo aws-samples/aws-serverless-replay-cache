@@ -12,9 +12,9 @@ before_script:
 jobs:
     include:
         script:
-            - stage: 'Origin Request'
+            - name: 'Origin Request'
             - cd origin-request && npm test
         script:
-            - stage: 'Origin Response'
+            - name: 'Origin Response'
             - cd origin-response && npm test
     
