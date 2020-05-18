@@ -22,7 +22,7 @@ exports.main = (event, ps) => {
     }
 
     let output = { "uri": uri, "querystring": querystring };
-    console.log(`Processed Request: ${JSON.stringify(output)}`);
+    //console.log(`Processed Request: ${JSON.stringify(output)}`);
    
     return output;
 };

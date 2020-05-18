@@ -1,7 +1,7 @@
 /**
  * Generates a URI from a request object treating query string if they exist.
  */
-exports.buildCustomOriginURI = function (request, queryStringSymbol) {
+exports.buildCustomOriginURI = function (request) {
     let uri = `${request.protocol}://${request.host}${request.uri}`;
 
     let querystring = request.querystring;
