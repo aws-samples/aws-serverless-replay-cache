@@ -11,10 +11,8 @@ before_script:
     
 jobs:
     include:
-        script:
-            - name: 'Origin Request'
-            - cd origin-request && npm test
-        script:
-            - name: 'Origin Response'
-            - cd origin-response && npm test
+        - name: 'Origin Request'
+        script: cd origin-request && npm test
+        - name: 'Origin Response'
+        script: cd origin-response && npm test
     
