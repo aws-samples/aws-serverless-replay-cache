@@ -8,11 +8,6 @@ AWS Serverless Replay Cache is a serverless implementation of cache solution for
 ![Sequence Diagram](sequence-diagram.png)
 
 
-## Requirements
-- Install: SAM CLI
-- Setup: CloudFront
-- Uninstall: AWS CLI
-
 ## Deploy SAM Application
 ```
 sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilities CAPABILITY_NAMED_IAM --parameter-overrides BucketName=<CACHE_BUCKET_NAME>
