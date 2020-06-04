@@ -10,6 +10,7 @@ exports.parse = function(event) {
     let origin = (request.origin.s3 != null) ? 's3':'custom';
     let protocol = request.origin[origin].protocol;
     let host = request.origin[origin].domainName;
+    let hostHeader = request.headers['host'];
     let method = request.method;
     let uri = request.uri;
     let querystring = request.querystring;
@@ -23,6 +24,7 @@ exports.parse = function(event) {
         "request": {
             "protocol": protocol,
             "host": host,
+            "hostHeader": hostHeader,
             "method": method,
             "uri": uri,
             "querystring": querystring,

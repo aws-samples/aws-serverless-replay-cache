@@ -17,7 +17,9 @@ exports.main = async(event, ps, contentManager) => {
     if (isGetMethod(request.method) && isCustomOrigin(request.origin) &&
         isStatusOk(response.status) && isAllowedContentLength(response.length, MAX_CONTENT_LENGTH)) {
 
-        let origin = util.buildCustomOriginURI(request);
+        let origin = {};
+        origin.uri = util.buildCustomOriginURI(request);
+        origin.hostHeader = request.hostHeader;
         let file = util.buildCacheFilename(request, ROOT_ACCESS_FILE_NAME, QUERY_STRING_SYMBOL);
 
         //console.log(`Invoking ${CONTENT_MANAGER_FUNCTION_ARN} for ${file}: ${origin}`);
