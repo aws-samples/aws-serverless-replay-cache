@@ -16,6 +16,11 @@ exports.handler = async(event) => {
     let request = event.Records[0].cf.request;
     request.uri = output.uri;
     request.querystring = output.querystring;
+    
+    let host = output.host;
+    if(host) { // It's a failover, so S3 domain must be enforced
+        request.headers['host'][0].value = host;
+    }
 
     return request;
 

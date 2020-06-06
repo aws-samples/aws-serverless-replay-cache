@@ -8,6 +8,7 @@ exports.main = (event, ps) => {
     let uri = event.uri;
     let querystring = event.querystring;
     let origin = event.origin;
+    let host;
 
     if (isS3Origin(origin.type) && isCacheBucketOrigin(origin.domain, BUCKET)) {
         if (uri == '/' || uri.endsWith('/')) {
@@ -19,9 +20,11 @@ exports.main = (event, ps) => {
             uri += encodeURIComponent(querystring);
             querystring = "";
         }
+        
+        host = origin.domain;
     }
 
-    let output = { "uri": uri, "querystring": querystring };
+    let output = { "uri": uri, "querystring": querystring, "host": host};
     //console.log(`Processed Request: ${JSON.stringify(output)}`);
    
     return output;
