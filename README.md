@@ -1,11 +1,17 @@
 [![Build Status](https://travis-ci.org/aws-samples/aws-serverless-replay-cache.svg?branch=master)](https://travis-ci.org/aws-samples/aws-serverless-replay-cache)
 
-## AWS Serverless Replay Cache
+## AWS Serverless Replay Cache (Beta)
 AWS Serverless Replay Cache is a serverless implementation of cache solution for dynamic and static content using Lambda@Edge.
 
 
 ## Diagram
 ![Sequence Diagram](sequence-diagram.png)
+
+
+## Create SAM Bucket
+```
+aws s3 mb s3://<SAM_BUCKET_NAME>
+```
 
 
 ## Deploy SAM Application
