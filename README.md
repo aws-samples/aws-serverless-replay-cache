@@ -8,6 +8,12 @@ AWS Serverless Replay Cache is a serverless implementation of cache solution for
 ![Sequence Diagram](sequence-diagram.png)
 
 
+## Requirements
+- AWS CLI
+- SAM CLI
+
+:warning: CloudFront [requires](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html#lambda-requirements-cloudfront-triggers) the deployment to be made in the US East (N. Virginia) Region.
+
 ## Create SAM Bucket
 ```
 aws s3 mb s3://<SAM_BUCKET_NAME>
@@ -59,8 +65,8 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 7. Click on **Deploy** button
 
 
-## Uninstall
-1. Remove Lambda@EDGE function associations
+## Cleanup
+1. Remove Lambda@Edge function associations. Please not it may take a few hours to be completed.
 2. Empty S3 content bucket:
 ```
 aws s3 rm s3://<CACHE_BUCKET_NAME> --recursive
