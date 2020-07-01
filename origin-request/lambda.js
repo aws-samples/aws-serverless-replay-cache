@@ -1,24 +1,20 @@
 // dependencies
-const eventParser = require('./adapter/originRequestEventParser');
 const application = require('./application/index');
-const ps = require('aws-ssm-parameter-store-util');
-
-const PARAMETERS_PATH = '/replay-cache';
-
+const eventParser = require('./adapter/originRequestEventParser');
+const config = require('./config.json');
 
 exports.handler = async(event) => { 
     console.log(`Event: ${JSON.stringify(event)}`);
     
-    await ps.init(PARAMETERS_PATH); // load ssm parameters
     let domainEvent = eventParser.parse(event);
-    let output = application.main(domainEvent, ps);
+    let output = application.main(domainEvent, config);
 
     let request = event.Records[0].cf.request;
     request.uri = output.uri;
     request.querystring = output.querystring;
     
     let host = output.host;
-    if(host) { // It's a failover, so S3 domain must be enforced
+    if(host) { // If it's a failover scenario, S3 domain must be enforced in the headers to avoid signing issues with S3
         request.headers['host'][0].value = host;
     }
 

@@ -5,7 +5,7 @@ const ps = {
     'rootAccessFileName': '_ROOT',
     'contentManagerFunctionArn': 'replay-cache-content-manager',
     'queryStringSymbol': '#',
-    'maxContentLength': 10
+    'maxContentLength': 5*1000*1000
 };
 
 let event = {

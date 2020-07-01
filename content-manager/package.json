@@ -8,7 +8,5 @@
   },
   "author": "tgpadua",
   "license": "ISC",
-  "dependencies": {
-    "aws-ssm-parameter-store-util": "^1.0.5"
-  }
+  "dependencies": {}
 }

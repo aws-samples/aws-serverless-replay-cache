@@ -1,17 +1,26 @@
 // dependencies
-const eventParser = require('./adapter/originResponseEventParser');
-const contentManager = require('./adapter/lambdaContentManager');
 const application = require('./application/index');
-const ps = require('aws-ssm-parameter-store-util');
-
-const PARAMETERS_PATH = '/replay-cache';
+const config = require('./config.json');
+const eventParser = require('./adapter/originResponseEventParser');
+const contentManager = require('./adapter/dynamodbContentManager');
 
 exports.handler = async(event) => {
     console.log(`Event: ${JSON.stringify(event)}`);
-    await ps.init(PARAMETERS_PATH); // load ssm parameters
-    
+   
     let domainEvent = eventParser.parse(event);
-    await application.main(domainEvent, ps, contentManager);
+    let result = await application.main(domainEvent, config, contentManager);
 
-    return event.Records[0].cf.response;
+    let response = event.Records[0].cf.response;
+    let updatedResponse = result.response;
+    if(updatedResponse) {
+        response.status = updatedResponse.status;
+        response.statusDescription = updatedResponse.statusDescription;
+        response.body = updatedResponse.body;
+        response.headers['cache-control'] = [{
+                key: 'Cache-Control',
+                value: updatedResponse.cacheControl
+            }];
+    }
+    
+    return response;
 };

@@ -1,16 +1,25 @@
 // dependencies
+const application = require('./application/index');
+const eventParser = require('./adapter/dynamodbEventParser');
 const httpClient = require('./adapter/httpClient');
 const dataStore = require('./adapter/s3DataStore');
-const application = require('./application/index');
-const ps = require('aws-ssm-parameter-store-util');
 
-const PARAMETERS_PATH = '/replay-cache';
+let BUCKET_NAME = process.env.BUCKET_NAME;
 
 exports.handler = async(event) => {
-    console.log(`Event: ${JSON.stringify(event)}`);
+    //console.log(`Event: ${JSON.stringify(event)}`);
     
-    await ps.init(PARAMETERS_PATH); // load ssm parameters
-    let response = await application.main(event, ps, httpClient, dataStore);
+    let promises = [];
+    
+    let records = event.Records;
+    for(let i=0; i < records.length; i++) {
+        let record = records[i];
+        if (record.eventName == 'INSERT' || record.eventName == 'MODIFY') { // Only threat inserts on the table
+            let domainEvent = eventParser.parse(record);
+            let promisse = await application.main(domainEvent, BUCKET_NAME, httpClient, dataStore);
+            promises.push(promisse);    
+        }
+    }    
 
-    return response;  
+    return await Promise.all(promises); 
 };

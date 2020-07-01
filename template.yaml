@@ -2,21 +2,21 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Replay Cache
 
-Globals: # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
   Function:
     Runtime: nodejs12.x
     Handler: lambda.handler
-    Timeout: 3
     AutoPublishAlias: live
 
 Parameters:
   BucketName:
     Description: Bucket name used to host cache content
     Type: String
-  MaxContentLength:
-    Description: Max allowed file size to be cached in MB
+    
+  TableName:
+    Description: 'DynamoDB Table Name'
     Type: String
-    Default: 5
+    Default: 'replay-cache'    
 
 Resources:
   ### SSM Parameters ###
@@ -28,55 +28,8 @@ Resources:
       Type: String
       Value: !Ref BucketName
 
-  MaxContentLengthSSM:
-    Type: AWS::SSM::Parameter
-    Properties: 
-      Description: Max allowed file size to be cached in MB
-      Name: /replay-cache/maxContentLength
-      Type: String
-      Value: !Ref MaxContentLength
-
-  RootAccessFileName:
-    Type: AWS::SSM::Parameter
-    Properties: 
-      Description: File name used to save cache when URI doesn't have a file (e.g. index.html)
-      Name: /replay-cache/rootAccessFileName
-      Type: String
-      Value: _ROOT
-
-  QueryStringSymbol:
-    Type: AWS::SSM::Parameter
-    Properties: 
-      Description: Symbol used to replace query string question mark
-      Name: /replay-cache/queryStringSymbol
-      Type: String
-      Value: '#'
-
-  ContentManagerFunctionArn:
-    Type: AWS::SSM::Parameter
-    Properties: 
-      Description: Content Manager Function Name
-      Name: /replay-cache/contentManagerFunctionArn
-      Type: String
-      Value: !GetAtt ContentManagerFunction.Arn
-
-
+Resources:
   ### IAM ###
-  ParameterStorePolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: ParameterStorePolicy
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: 'ssm:GetParametersByPath'
-            Resource: '*'
-      Roles: 
-        - !Ref OriginRequestRole
-        - !Ref OriginResponseRole
-        - !Ref ContentManagerRole
-
   LambdaPolicy:
     Type: AWS::IAM::Policy
     Properties:
@@ -85,8 +38,27 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Effect: Allow
-            Action: 'lambda:InvokeFunction'
+            Action: 'lambda:SendMessage'
             Resource: !GetAtt ContentManagerFunction.Arn
+      Roles: 
+        - !Ref OriginResponseRole
+
+  DynamoDBPutItemPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: DynamoDBPutItemPolicy
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: 'dynamodb:putItem'
+            Resource: 
+              !Join
+                - ''
+                - - 'arn:aws:dynamodb:*:'
+                  - !Ref 'AWS::AccountId'
+                  - ':table/'
+                  - !Ref TableName            
       Roles: 
         - !Ref OriginResponseRole
 
@@ -106,54 +78,54 @@ Resources:
                   - '/*'
       Roles: 
         - !Ref ContentManagerRole        
-   
+
   OriginRequestRole:
     Type: AWS::IAM::Role
     Properties: 
       RoleName: ReplayCacheOriginRequestRole
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Action: "sts:AssumeRole"
-            Effect: "Allow"             
+          - Action: 'sts:AssumeRole'
+            Effect: 'Allow'             
             Principal:
               Service: 
-                - "lambda.amazonaws.com"
-                - "edgelambda.amazonaws.com"
+                - 'lambda.amazonaws.com'
+                - 'edgelambda.amazonaws.com'
 
   OriginResponseRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: ReplayCacheOriginResponseRole
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Action: "sts:AssumeRole"
-            Effect: "Allow"             
+          - Action: 'sts:AssumeRole'
+            Effect: 'Allow'             
             Principal:
               Service: 
-                - "lambda.amazonaws.com"
-                - "edgelambda.amazonaws.com"
+                - 'lambda.amazonaws.com'
+                - 'edgelambda.amazonaws.com'
  
   ContentManagerRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: ReplayCacheContentManagerRole
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole'
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Action: 
-              - "sts:AssumeRole"
+              - 'sts:AssumeRole'
             Principal:
               Service: 
-                - "lambda.amazonaws.com"
+                - 'lambda.amazonaws.com'
 
                 
   ### Lambda Functions ###  
@@ -177,6 +149,17 @@ Resources:
       CodeUri: content-manager/
       FunctionName: replay-cache-content-manager
       Role: !GetAtt ContentManagerRole.Arn
+      Timeout: 5
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+      Events:
+        Stream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt ReplayCacheDynamoDBTable.StreamArn
+            BatchSize: 2
+            StartingPosition: TRIM_HORIZON            
 
 
   ### S3 ###
@@ -185,3 +168,91 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       BucketName: !Ref BucketName
+
+
+  ## DynamoDB ###
+  ReplayCacheDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        - AttributeName: 'uri'
+          AttributeType: 'S'
+      KeySchema:
+        - AttributeName: 'uri'
+          KeyType: 'HASH'
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      BillingMode: 'PROVISIONED'
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TimeToLiveSpecification:
+        AttributeName: 'ttl'
+        Enabled: true        
+        
+
+  ReadCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: 'ReplayCacheDynamoDBTable'
+    Properties:
+      MaxCapacity: 30
+      MinCapacity: 5
+      ResourceId: !Join
+        - /
+        - - 'table'
+          - !Ref TableName
+      ScalableDimension: dynamodb:table:ReadCapacityUnits
+      ServiceNamespace: dynamodb
+      RoleARN: 
+        !Join
+          - ''
+          - - 'arn:aws:iam::'
+            - !Ref 'AWS::AccountId'
+            - ':role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable'
+
+  WriteCapacityScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: 'ReplayCacheDynamoDBTable'
+    Properties:
+      MaxCapacity: 30
+      MinCapacity: 5
+      ResourceId: !Join
+        - /
+        - - 'table'
+          - !Ref TableName
+      ScalableDimension: dynamodb:table:WriteCapacityUnits
+      ServiceNamespace: dynamodb
+      RoleARN: 
+        !Join
+          - ''
+          - - 'arn:aws:iam::'
+            - !Ref 'AWS::AccountId'
+            - ':role/aws-service-role/dynamodb.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_DynamoDBTable'
+      
+  ReadScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: ReadAutoScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref ReadCapacityScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70.0
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBReadCapacityUtilization
+
+  WriteScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: WriteAutoScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref WriteCapacityScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 70.0
+        PredefinedMetricSpecification:
+          PredefinedMetricType: DynamoDBWriteCapacityUtilization  
+      
+Outputs:
+  Bucket:
+    Description: 'Content Bucket Name'
+    Value: !Ref BucketName

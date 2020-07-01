@@ -1,16 +1,15 @@
 
-exports.main = (event, ps) => {
+exports.main = (event, config) => {
 
-    const BUCKET = ps.bucket;
-    const ROOT_ACCESS_FILE_NAME = ps.rootAccessFileName;
-    const QUERY_STRING_SYMBOL = ps.queryStringSymbol;
+    const ROOT_ACCESS_FILE_NAME = config.rootAccessFileName;
+    const QUERY_STRING_SYMBOL = config.queryStringSymbol;
 
     let uri = event.uri;
     let querystring = event.querystring;
     let origin = event.origin;
     let host;
 
-    if (isS3Origin(origin.type) && isCacheBucketOrigin(origin.domain, BUCKET)) {
+    if (isS3Origin(origin.type)) {
         if (uri == '/' || uri.endsWith('/')) {
             uri += ROOT_ACCESS_FILE_NAME;
         }
@@ -36,8 +35,4 @@ exports.main = (event, ps) => {
  */
 function isS3Origin(type) {
     return type == 's3';
-}
-
-function isCacheBucketOrigin(domain, bucket) {
-    return domain.split('.')[0] == bucket;
 }

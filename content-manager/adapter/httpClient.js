@@ -3,10 +3,11 @@ const http = require('http');
 const https = require('https');
 
 exports.get = async function(origin) {
+    //console.log(`Downloading ${JSON.stringify(origin)}`);
+
     let uri = origin.uri;
     let hostHeader = origin.hostHeader;
     
-    console.log(`Downloading: ${uri}`);
     return new Promise((resolve, reject) => {
         let options = { 
             headers: {

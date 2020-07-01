@@ -1,0 +1,6 @@
+{
+    "tableName": "replay-cache",
+    "maxContentLength": 5000000,
+    "queryStringSymbol": "#",
+    "rootAccessFileName": "_ROOT"
+}

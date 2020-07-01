@@ -4,13 +4,14 @@
 AWS Serverless Replay Cache is a serverless implementation of cache solution for dynamic and static content using Lambda@Edge.
 
 
-## Diagram
-![Sequence Diagram](sequence-diagram.png)
+## Solution Blueprint
+![Solution Blueprint](blueprint.png)
 
 
 ## Requirements
-- AWS CLI
-- SAM CLI
+- AWS CLI installed and configured
+- SAM CLI installed and configured
+- CloudFront Distribution created and with Behavior(s) configured
 
 :warning: CloudFront [requires](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html#lambda-requirements-cloudfront-triggers) the deployment to be made in the US East (N. Virginia) Region.
 
@@ -65,13 +66,22 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 7. Click on **Deploy** button
 
 
+## Add Region(s) on DynamoDB Global Table
+1. Open the DynamoDB console at https://console.aws.amazon.com/dynamodb
+2. In the navigation panel select **Tables**, and then open **replay-cache** table
+3. Under **Global Tables** tab, click on **Add region**
+4. Select the appropriated Region
+5. Click on **Create replica** button
+
+
 ## Cleanup
 1. Remove Lambda@Edge function associations. Please not it may take a few hours to be completed.
-2. Empty S3 content bucket:
+2. Delete the DynamoDB Global Table regions
+3. Empty S3 content bucket:
 ```
 aws s3 rm s3://<CACHE_BUCKET_NAME> --recursive
 ```
-3. Delete the CloudFormation Stack
+4. Delete the CloudFormation Stack
 ```
 aws cloudformation delete-stack --stack-name replay-cache
 ```
