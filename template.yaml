@@ -168,6 +168,8 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       BucketName: !Ref BucketName
+      MetricsConfigurations:
+        - Id: "EntireBucket"
 
 
   ## DynamoDB ###
