@@ -18,15 +18,6 @@ Parameters:
     Type: String
     Default: 'replay-cache'    
 
-Resources:
-  ### SSM Parameters ###
-  BucketSSM:
-    Type: AWS::SSM::Parameter
-    Properties: 
-      Description: Bucket name used to host cache content
-      Name: /replay-cache/bucket
-      Type: String
-      Value: !Ref BucketName
 
 Resources:
   ### IAM ###
