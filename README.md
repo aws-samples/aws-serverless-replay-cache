@@ -75,7 +75,7 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 
 
 ## Cleanup
-1. Remove Lambda@Edge function associations. Please not it may take a few hours to be completed.
+1. Remove Lambda@Edge function associations. Please note it may take a few hours to be completed.
 2. Delete the DynamoDB Global Table regions
 3. Empty S3 content bucket:
 ```
