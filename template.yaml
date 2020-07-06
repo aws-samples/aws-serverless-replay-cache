@@ -198,7 +198,7 @@ Resources:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     DependsOn: 'ReplayCacheDynamoDBTable'
     Properties:
-      MaxCapacity: 30
+      MaxCapacity: 100
       MinCapacity: 5
       ResourceId: !Join
         - /
@@ -217,7 +217,7 @@ Resources:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
     DependsOn: 'ReplayCacheDynamoDBTable'
     Properties:
-      MaxCapacity: 30
+      MaxCapacity: 100
       MinCapacity: 5
       ResourceId: !Join
         - /
