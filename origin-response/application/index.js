@@ -68,7 +68,7 @@ function isGetMethod(method) {
 }
 
 function isAllowedContentLength(length, maxContentLength) {
-    length = Number(length); // type cast
+    length = (length) ? Number(length):0; // type cast or treat as zero for undefined
     maxContentLength = Number(maxContentLength); // type cast
     return length == undefined // PHP doesn't return length
         || length <= maxContentLength;
