@@ -5,7 +5,7 @@ const eventParser = require('./adapter/originResponseEventParser');
 const contentManager = require('./adapter/dynamodbContentManager');
 
 exports.handler = async(event) => {
-    console.log(`Event: ${JSON.stringify(event)}`);
+    //console.log(`Event: ${JSON.stringify(event)}`);
    
     let domainEvent = eventParser.parse(event);
     let result = await application.main(domainEvent, config, contentManager);

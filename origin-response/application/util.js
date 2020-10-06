@@ -1,7 +1,7 @@
 /**
  * Generates a URI from a request object treating query string if they exist.
  */
-exports.buildCustomOriginURI = function (request) {
+exports.buildCustomOriginURI = function(request) {
     let uri = `${request.protocol}://${request.host}${request.uri}`;
 
     let querystring = request.querystring;
@@ -15,11 +15,12 @@ exports.buildCustomOriginURI = function (request) {
 /**
  * Generates a filename from a request object treating query string and root access if they exist.
  */
-exports.buildCacheFilename = function (request, rootAccessFileName, queryStringSymbol) {
+exports.buildCacheFilename = function(request, rootAccessFileName, queryStringSymbol) {
     let uri = request.uri;
     let querystring = request.querystring;
+    let protocol = request.protocol;
 
-    let file = uri.substr(1);
+    let file = `${protocol}/${uri.substr(1)}`;
 
     // handles access to directories
     if (uri == '/' || uri.endsWith('/')) {
@@ -27,8 +28,8 @@ exports.buildCacheFilename = function (request, rootAccessFileName, queryStringS
     }
 
     if (querystring != '') {
-        file += `${queryStringSymbol}${querystring}` // S3 Cache origin uses query string id different of ?
+        file += `${queryStringSymbol}${querystring}`; // S3 Cache origin uses query string id different of ?
     }
 
     return file;
-};
+}

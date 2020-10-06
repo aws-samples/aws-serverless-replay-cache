@@ -1,5 +1,6 @@
 // dependencies
 const application = require('./application/index');
+const config = require('./config.json');
 const eventParser = require('./adapter/dynamodbEventParser');
 const httpClient = require('./adapter/httpClient');
 const dataStore = require('./adapter/s3DataStore');
@@ -16,7 +17,7 @@ exports.handler = async(event) => {
         let record = records[i];
         if (record.eventName == 'INSERT' || record.eventName == 'MODIFY') { // Only threat inserts on the table
             let domainEvent = eventParser.parse(record);
-            let promisse = await application.main(domainEvent, BUCKET_NAME, httpClient, dataStore);
+            let promisse = await application.main(domainEvent, config, BUCKET_NAME, httpClient, dataStore);
             promises.push(promisse);    
         }
     }    

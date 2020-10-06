@@ -7,7 +7,7 @@ exports.parse = function (event) {
 
     let item = event.dynamodb.NewImage;
     let domainEvent = {
-        origin: {
+        request: {
                 uri: item.uri.S,
                 hostHeader: item.hostheader.S
             },

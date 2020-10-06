@@ -15,11 +15,18 @@ AWS Serverless Replay Cache is a serverless implementation of cache solution for
 
 :warning: CloudFront [requires](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html#lambda-requirements-cloudfront-triggers) the deployment to be made in the US East (N. Virginia) Region.
 
+
+## Copy configuration file (FOR WINDOWS USERS ONLY)
+```
+cp conf/config.json content-manager/
+cp conf/config.json origin-request/
+cp conf/config.json origin-response/
+```
+
 ## Create SAM Bucket
 ```
 aws s3 mb s3://<SAM_BUCKET_NAME>
 ```
-
 
 ## Deploy SAM Application
 ```
@@ -43,7 +50,11 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 16. Click on **Create** button
 17. Under **Behaviors** tab, edit or create a new Behavior that will serve cached content in case of a failover
 18. Origin or Origin Group select **ReplayCache-OriginGroup**
-19. Click on **Create** or **Yes, Edit** button
+19. Cache and origin request settings select **Use legacy cache setting**
+20. Cache Based on Selected Request Headers select **Whitelist**
+21. Whitelist Headers input enter **Host** value and click on **Add Custom >>** button
+22. Whitelist Headers list **CloudFront-Forwarded-Proto** and click on **Add >>** button
+23. Click on **Create** or **Yes, Edit** button
 
 
 ## Deploy Origin Request Lambda@Edge

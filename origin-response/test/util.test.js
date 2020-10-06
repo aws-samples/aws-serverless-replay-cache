@@ -19,7 +19,7 @@ describe('Util', function() {
             request.querystring = '';
             const uri = util.buildCustomOriginURI(request);
             const expectedUri = `${request.protocol}://${request.host}${request.uri}`;
-            assert.equal(uri, expectedUri);
+            assert.strictEqual(uri, expectedUri);
         });
 
         it('Accessing file with querystring', function() {
@@ -27,7 +27,7 @@ describe('Util', function() {
             request.querystring = 'ver=1.0.0';
             const uri = util.buildCustomOriginURI(request);
             const expectedUri = `${request.protocol}://${request.host}${request.uri}?${request.querystring}`;
-            assert.equal(uri, expectedUri);
+            assert.strictEqual(uri, expectedUri);
         });
 
     });
@@ -41,8 +41,8 @@ describe('Util', function() {
             request.querystring = '';
 
             const filename = util.buildCacheFilename(request, rootAccessFileName, queryStringSymbol);
-            const expectedFilename = request.uri.substr(1);
-            assert(filename, expectedFilename);
+            const expectedFilename = `${request.protocol}${request.uri}`;
+            assert.strictEqual(filename, expectedFilename);
         });
         
         it('Accessing file with querystring', function() {
@@ -50,8 +50,8 @@ describe('Util', function() {
             request.querystring = 'ver=1.0.0';
 
             const filename = util.buildCacheFilename(request, rootAccessFileName, queryStringSymbol);
-            const expectedFilename = `${request.uri.substr(1)}${queryStringSymbol}${request.querystring}`;
-            assert(filename, expectedFilename);
+            const expectedFilename = `${request.protocol}${request.uri}${queryStringSymbol}${request.querystring}`;
+            assert.strictEqual(filename, expectedFilename);
         });
 
         it('Accessing root directory', function() {
@@ -59,17 +59,17 @@ describe('Util', function() {
             request.querystring = '';
 
             const filename = util.buildCacheFilename(request, rootAccessFileName, queryStringSymbol);
-            const expectedFilename = rootAccessFileName;
-            assert(filename, expectedFilename);
+            const expectedFilename = `${request.protocol}${request.uri}${rootAccessFileName}`;
+            assert.strictEqual(filename, expectedFilename);
         });
 
         it('Accessing root directory with querystring', function() {
-            request.uri = '/style.css';
+            request.uri = '/';
             request.querystring = 'ver=1.0.0';
 
             const filename = util.buildCacheFilename(request, rootAccessFileName, queryStringSymbol);
-            const expectedFilename = `${rootAccessFileName}${queryStringSymbol}${request.querystring}`;
-            assert(filename, expectedFilename);
+            const expectedFilename = `${request.protocol}${request.uri}${rootAccessFileName}${queryStringSymbol}${request.querystring}`;
+            assert.strictEqual(filename, expectedFilename);
         });        
     });
 });

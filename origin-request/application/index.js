@@ -7,9 +7,12 @@ exports.main = (event, config) => {
     let uri = event.uri;
     let querystring = event.querystring;
     let origin = event.origin;
-    let host;
+    let host = event.headers.host;
+    let protocol = event.headers.protocol;
 
     if (isS3Origin(origin.type)) {
+        uri = `/${protocol}${uri}`;
+        
         if (uri == '/' || uri.endsWith('/')) {
             uri += ROOT_ACCESS_FILE_NAME;
         }
@@ -20,12 +23,12 @@ exports.main = (event, config) => {
             querystring = "";
         }
         
+        // If S3 is the origin (failover scenario), the host header must reflect S3 host to avoid signing error
         host = origin.domain;
     }
 
     let output = { "uri": uri, "querystring": querystring, "host": host};
-    //console.log(`Processed Request: ${JSON.stringify(output)}`);
-   
+
     return output;
 };
 

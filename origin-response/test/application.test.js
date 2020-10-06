@@ -31,31 +31,31 @@ describe('Application', function() {
 
     it('Success response', async function() {
         const output = await application.main(event, ps, contentManager);
-        assert.equal(output.cached, true);
+        assert.strictEqual(output.cached, true);
     });
 
     it('Request using POST method', async function() {
         event.request.method = 'POST';
         const output = await application.main(event, ps, contentManager);
-        assert.equal(output.cached, false);
+        assert.strictEqual(output.cached, false);
     });
 
     it('Response status is not 200', async function() {
         event.response.status = 202;
         const output = await application.main(event, ps, contentManager);
-        assert.equal(output.cached, false);
+        assert.strictEqual(output.cached, false);
     });
 
     it('Response length greater than allowed', async function() {
         event.response.length = ps.maxContentLength + 1;
         const output = await application.main(event, ps, contentManager);
-        assert.equal(output.cached, false);
+        assert.strictEqual(output.cached, false);
     });
 
     it('Origin is S3', async function() {
         event.request.origin = 's3';
         const output = await application.main(event, ps, contentManager);
-        assert.equal(output.cached, false);
+        assert.strictEqual(output.cached, false);
     });
 
 

@@ -13,12 +13,12 @@ exports.main = async(event, ps, contentManager) => {
     //console.log(`${request.origin};${request.method};${request.protocol};${request.host};${request.uri};${request.querystring};${response.status};${response.length}`);
     //console.log(`${isGetMethod(request.method)} | ${isCustomOrigin(request.origin)} |
     //    ${isStatusOk(response.status)} | ${isAllowedContentLength(response.length, MAX_CONTENT_LENGTH)}`);
-    // if true will cache the content
     let result = {
         cached: false,
         response: null
     };
-
+    
+    // if true will cache the content
     if (isGetMethod(request.method) && isCustomOrigin(request.origin) &&
         isStatusOk(response.status) && isAllowedContentLength(response.length, MAX_CONTENT_LENGTH)) {
 

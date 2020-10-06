@@ -2,9 +2,9 @@ var assert = require('assert');
 const application = require('../application/index');
 
 const ps = {
-  'bucket': 'my-cache-bucket',
-  'rootAccessFileName': '_ROOT',
-  'queryStringSymbol': '#'
+  bucket: 'my-cache-bucket',
+  rootAccessFileName: '_ROOT',
+  queryStringSymbol: '#'
 };
 
 describe('Application', function() {
@@ -13,10 +13,13 @@ describe('Application', function() {
 
   beforeEach(function() {
     ec2Event = {
-      "origin": {
-        "type": 'custom',
-        "domain": 'ec2-10-0-0-1.compute-1.amazonaws.com'
-      }
+      origin: {
+        type: 'custom',
+        domain: 'ec2-10-0-0-1.compute-1.amazonaws.com',
+      },
+      headers : {
+        protocol: 'http'
+      }      
     };
   });
 
@@ -28,8 +31,8 @@ describe('Application', function() {
       ec2Event.querystring = '';
 
       const output = application.main(ec2Event, ps);
-      assert.equal(output.uri, uri);
-      assert.equal(output.querystring, '');
+      assert.strictEqual(output.uri, uri);
+      assert.strictEqual(output.querystring, '');
     });
 
     it('Accessing file with querystring', function() {
@@ -39,8 +42,8 @@ describe('Application', function() {
       ec2Event.querystring = querystring;
 
       const output = application.main(ec2Event, ps);
-      assert.equal(output.uri, uri);
-      assert.equal(output.querystring, querystring);
+      assert.strictEqual(output.uri, uri);
+      assert.strictEqual(output.querystring, querystring);
     });
 
   });
@@ -51,9 +54,12 @@ describe('Application', function() {
     
     beforeEach(function() {
       s3Event = {
-        "origin": {
-          "type": 's3',
-          "domain": 'my-cache-bucket.s3.amazonaws.com'
+        origin: {
+          type: 's3',
+          domain: 'my-cache-bucket.s3.amazonaws.com',
+        },
+        headers : {
+          protocol: 'http'
         }
       };
 
@@ -65,8 +71,10 @@ describe('Application', function() {
       s3Event.querystring = '';
 
       const output = application.main(s3Event, ps);
-      assert.equal(output.uri, uri);
-      assert.equal(output.querystring, null);
+      
+      let expectedUri = `/${s3Event.headers.protocol}${uri}`;
+      assert.strictEqual(output.uri, expectedUri);
+      assert.strictEqual(output.querystring, null);
     });
 
     it('Accessing file with querystring', function() {
@@ -77,8 +85,10 @@ describe('Application', function() {
 
       const output = application.main(s3Event, ps);
 
-      assert.equal(output.uri, uri + encodeURIComponent(`${ps.queryStringSymbol}${querystring}`));
-      assert.equal(output.querystring, '');
+      let encondedQueryString = encodeURIComponent(`${ps.queryStringSymbol}${querystring}`);
+      let expectedUri = `/${s3Event.headers.protocol}${uri}${encondedQueryString}`;
+      assert.strictEqual(output.uri, expectedUri);
+      assert.strictEqual(output.querystring, '');
     });
 
     it('Accessing root directory', function() {
@@ -87,8 +97,10 @@ describe('Application', function() {
       s3Event.querystring = '';
 
       const output = application.main(s3Event, ps);
-      assert.equal(output.uri, `${uri}${ps.rootAccessFileName}`);
-      assert.equal(output.querystring, null);
+      
+      let expectedUri = `/${s3Event.headers.protocol}${uri}${ps.rootAccessFileName}`;
+      assert.strictEqual(output.uri, expectedUri);
+      assert.strictEqual(output.querystring, null);
     });
 
     it('Accessing sub directory', function() {
@@ -97,8 +109,10 @@ describe('Application', function() {
       s3Event.querystring = '';
 
       const output = application.main(s3Event, ps);
-      assert.equal(output.uri, `${uri}${ps.rootAccessFileName}`);
-      assert.equal(output.querystring, null);
+      
+      let expectedUri = `/${s3Event.headers.protocol}${uri}${ps.rootAccessFileName}`;
+      assert.strictEqual(output.uri, expectedUri);
+      assert.strictEqual(output.querystring, null);
     });
 
   });
