@@ -98,8 +98,8 @@ aws cloudformation delete-stack --stack-name replay-cache
 ```
 
 ## Application Design
-![Caching ](Replay Cache-Caching.png)
-![Failover](Replay Cache-Failover.png)
+![Caching ](Replay%20Cache-Caching.png)
+![Failover](Replay%20Cache-Failover.png)
 
 
 ## License
