@@ -97,5 +97,10 @@ aws s3 rm s3://<CACHE_BUCKET_NAME> --recursive
 aws cloudformation delete-stack --stack-name replay-cache
 ```
 
+## Application Design
+![Caching ](Replay Cache-Caching.png)
+![Failover](Replay Cache-Failover.png)
+
+
 ## License
 This library is licensed under the MIT-0 License. See the LICENSE file.
