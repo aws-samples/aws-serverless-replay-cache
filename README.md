@@ -42,7 +42,7 @@ sam deploy --stack-name replay-cache --s3-bucket <SAM_BUCKET_NAME> --capabilitie
 4. In the navigation panel select **Distributions**, and then click in the ID of the CloudFront Distribution to be configured
 5. Under **Origins and Origin Groups** tab, click on **Create Origin** button
 6. Origin Domain Name select the bucket specified in the parameter **<CACHE_BUCKET_NAME>** of SAM deployment
-7. Bucket Access select **Yes**
+7. Restrict Bucket Access select **Yes**
 8. Origin Access Identity select **Create a New Identity**
 9. Grant Read Permissions Bucket select **Yes, Update Bucket Policy**
 10. Click on **Create** button
