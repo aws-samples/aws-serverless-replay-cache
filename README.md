@@ -15,6 +15,10 @@ AWS Serverless Replay Cache is a serverless implementation of cache solution for
 
 :warning: CloudFront [requires](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html#lambda-requirements-cloudfront-triggers) the deployment to be made in the US East (N. Virginia) Region.
 
+## Git Clone
+```
+git clone https://github.com/aws-samples/aws-serverless-replay-cache.git
+```
 
 ## Copy configuration file (FOR WINDOWS USERS ONLY)
 ```
