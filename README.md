@@ -106,5 +106,10 @@ aws cloudformation delete-stack --stack-name replay-cache
 ![Failover](Replay%20Cache-Failover.png)
 
 
+## Troubleshooting
+1. I can't see anything being cached.
+It's likely you didn't created a DynamoDB Global Table replica in the region that Amazon CloudFront is serving you. Each region you'd like to trigger the caching process must have its own replica. Notice, by default the table is created in us-east-1 region. You can additionaly confirm this in the Origin Response function logs at Amazon CloudWatch in the respective region.
+
+
 ## License
 This library is licensed under the MIT-0 License. See the LICENSE file.
