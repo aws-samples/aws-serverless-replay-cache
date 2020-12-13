@@ -29,5 +29,13 @@ exports.save = async function(table, file, origin) {
         }
     };
     
-    return await dynamodb.putItem(params).promise().catch(err => {console.log(err)});
+    return await dynamodb.putItem(params).promise()
+        .catch(err => {
+            if (err.code == 'ResourceNotFoundException') {
+                console.warn(`Content could not be published! DynamoDB Global Table Replica ${table} doesn't exists in this region.`);
+            } else {
+                console.log(err);
+            }
+        });
+    
 };
